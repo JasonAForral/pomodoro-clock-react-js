@@ -4,7 +4,6 @@ body {
 }
 .tomato {
   display: inline-block;
-  position: absolute;
   width: 20px;
   height: 20px;
   border-radius: 50%;

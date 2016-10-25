@@ -2,6 +2,8 @@
 
 (() => {
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
   const {
     Component,
     PropTypes
@@ -36,7 +38,7 @@
           top: this.state.top - (200 * Math.cos(this.angle())), 
         }
       return (
-        <div className='tomato' style={divStyle}>
+        <div className='tomato'>
           
         </div>
       );
@@ -56,7 +58,7 @@
   class Timer extends Component {
     constructor(props) {
       super(props)
-      let remainingTime = 1.2 * 60000, // 2 minutes,
+      let remainingTime = 0.05 * 60000, // 2 minutes,
         targetTime = 0,
         paused = false;
 
@@ -75,10 +77,9 @@
       setTimeout(() => {
         this.tick()
       }, 20)
-      this.setState({
-        ...this.state,
+      this.setState(_extends(this.state, {
         targetTime: Date.now() + this.state.remainingTime,
-      })
+      }))
     }
 
     tick() {
@@ -87,17 +88,14 @@
       })
       if (!this.state.paused) {
         if (this.state.remainingTime > 0) {
-          this.setState({
-            ...this.state,
+          this.setState(_extends(this.state, {
             remainingTime: this.state.targetTime - Date.now(),
-          });
+          }));
         } else {
-          console.log('stop')
-          this.setState({
-            ...this.state,
+          this.setState(_extends(this.state, {
             remainingTime: 0,
             paused: true,
-          });
+          }));
         }
       }
     }
