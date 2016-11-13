@@ -1,5 +1,6 @@
 "use strict";
 
+const spread = Object.assign
 
 const {
   Component,
@@ -16,14 +17,20 @@ class MyComponent extends Component {
   }
 };
 
+class TomatoCanFull extends Component {
+  render() {
+    return (
+      <div className='tomato-can-full'>
+      </div>
+    );
+  }
+};
+
+
 class Tomato extends Component {
   render() {
-    let { angle } = this.props
-    let divStyle = {
-      transform: 'translate(50vw, 50vh)rotate(' + angle + 'deg)translate(200px, 0)',
-    }
     return (
-      <div className='tomato' style={divStyle}>
+      <div className='tomato'>
       </div>
     );
   }
@@ -42,12 +49,10 @@ class AdjustButton extends Component {
 class Timer extends Component {
   constructor(props) {
     super(props)
-    let remainingTime = 0.95 * 60000, // 2 minutes,
+    let remainingTime = 5.05 * 60000, // 2 minutes,
       targetTime = 0,
       paused = false;
 
-    //setTimeout(() => { this.tick() }, 500)
-    //setTimeout(() => { this.tick() }, 20)
     this.state = {
       remainingTime,
       paused,
@@ -58,26 +63,33 @@ class Timer extends Component {
     setTimeout(() => {
       this.tick()
     }, 50)
-    this.setState(Object.assign({}, this.state, {
+    this.setState({
       targetTime: Date.now() + this.state.remainingTime,
-    }))
+    })
   }
 
 
   tick() {
-    setTimeout(() => {
-      this.tick()
-    })
-    if (!this.state.paused) {
-      if (this.state.remainingTime > 0) {
-        this.setState(Object.assign({}, this.state, {
-          remainingTime: this.state.targetTime - Date.now(),
-        }));
+    const {
+      paused,
+      remainingTime,
+      targetTime
+    } = this.state
+
+    if (!paused) {
+      setTimeout(() => {
+        this.tick()
+      })
+
+      if (remainingTime > 0) {
+        this.setState({
+          remainingTime: targetTime - Date.now(),
+        });
       } else {
-        this.setState(Object.assign({}, this.state, {
+        this.setState({
           remainingTime: 0,
           paused: true,
-        }));
+        });
       }
     }
   }
@@ -98,21 +110,32 @@ class Timer extends Component {
   }
 
   render() {
-    let seconds = this.seconds(),
+    const seconds = this.seconds(),
+      minutes = this.minutes(),
       showTime = () => this.minutes() + ':' + this.lead(seconds);
 
-    let tomatoes = new Array(seconds).fill(0).map((tomato, index) => (
+    const tomatoes = new Array(seconds).fill(0).map((tomato, index) => (
       <Tomato
         angle={index * 6}
         key={index}
         />
-    ));
+    ))
+
+    const tomatoCans = new Array(minutes).fill(0).map((can, index) => (
+      <TomatoCanFull key={index} />
+    ))
+    
     return (
       <div className='timer'>
         <h2>Timer {this.props.job} {showTime()}</h2>
         <AdjustButton sign='plus' />
         <AdjustButton sign='minus' />
-        {tomatoes}
+        {tomatoCans}
+        <div className='tomato-can-full'>
+          <div className='tomato-can'>
+          {tomatoes}
+          </div>
+        </div>
       </div>
     );
   }

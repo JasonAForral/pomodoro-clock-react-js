@@ -2,16 +2,32 @@ body {
   font-family: 'Open Sans', Arial, sans-serif;
   text-align: center;
 }
-.tomato {
+
+.tomato-can-full {
   display: inline-block;
-  position: absolute;
+  background: #ff6347;
+  border-radius: 5px;
+  text-align: center;
+  vertical-align: middle;
+  height: 260px;
+  width: 100px;
+}
+
+.tomato-can {
+  background: #fed;
+  display: flex;
+  align-content: flex-start;
+  justify-content: center;
+  flex-flow: wrap-reverse;
+  height: 260px;
+  width: 100px;
+}
+.tomato {
+  display: inline-flex;
   width: 20px;
   height: 20px;
   border-radius: 50%;
   background: #ff6347;
   text-align: center;
   vertical-align: middle;
-  z-index: -1;
-  top: -10px;
-  left: -10px;
 }
