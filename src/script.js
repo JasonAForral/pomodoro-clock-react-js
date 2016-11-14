@@ -51,35 +51,51 @@ class Timer extends Component {
     super(props)
     let remainingTime = 5.05 * 60000, // 2 minutes,
       targetTime = 0,
-      paused = false;
+      isRunning = false;
+
+    this.tick = this.tick.bind(this)
+    this.timerStartStop = this.timerStartStop.bind(this)
+    this.interval = 1000 / 60
 
     this.state = {
       remainingTime,
-      paused,
+      isRunning,
+      targetTime,
     }
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.tick()
-    }, 50)
-    this.setState({
-      targetTime: Date.now() + this.state.remainingTime,
-    })
-  }
+  timerStartStop(e) {
+    const {
+      isRunning,
+      remainingTime,
+      targetTime,
+    } = this.state
 
+    setTimeout(this.tick)
+
+    if (!isRunning) {
+      this.setState({
+        isRunning: true,
+        targetTime: Date.now() + remainingTime,
+      })
+    } else {
+      this.setState({
+        isRunning: false,
+      })
+    }
+  }
 
   tick() {
     const {
-      paused,
+      isRunning,
       remainingTime,
       targetTime
     } = this.state
 
-    if (!paused) {
+    if (isRunning) {
       setTimeout(() => {
         this.tick()
-      })
+      }, this.interval)
 
       if (remainingTime > 0) {
         this.setState({
@@ -88,7 +104,7 @@ class Timer extends Component {
       } else {
         this.setState({
           remainingTime: 0,
-          paused: true,
+          isRunning: false,
         });
       }
     }
@@ -109,31 +125,39 @@ class Timer extends Component {
     return this.minutes() + ':' + this.lead(this.seconds())
   }
 
+  getClass(isRunning) {
+    return isRunning ? 'running' : 'paused' 
+  }
+
   render() {
+    const {
+      isRunning,
+    } = this.state
     const seconds = this.seconds(),
       minutes = this.minutes(),
       showTime = () => this.minutes() + ':' + this.lead(seconds);
 
-    const tomatoes = new Array(seconds).fill(0).map((tomato, index) => (
-      <Tomato
-        angle={index * 6}
-        key={index}
-        />
-    ))
-
-    const tomatoCans = new Array(minutes).fill(0).map((can, index) => (
-      <TomatoCanFull key={index} />
-    ))
-    
     return (
       <div className='timer'>
-        <h2>Timer {this.props.job} {showTime()}</h2>
+        <h2
+          onClick={this.timerStartStop}
+          className={`title ${this.getClass(isRunning)}`}
+          >
+          Timer {this.props.job} {showTime()}
+        </h2>
         <AdjustButton sign='plus' />
         <AdjustButton sign='minus' />
-        {tomatoCans}
+        {new Array(minutes).fill(0).map((can, index) => (
+          <TomatoCanFull key={index} />
+        ))}
         <div className='tomato-can-full'>
           <div className='tomato-can'>
-          {tomatoes}
+          {(seconds > 0) && new Array(seconds).fill(0).map((tomato, index) => (
+            <Tomato
+              angle={index * 6}
+              key={index}
+              />
+          ))}
           </div>
         </div>
       </div>
